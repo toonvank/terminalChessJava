@@ -12,12 +12,16 @@ import sesh.mood.chessGame.services.ConsoleHelper;
 
 @Service
 public class TerminalChess implements Game {
+    static int ROWS = 8;
     ConsoleHelper ch = new ConsoleHelper();
     List<String> rankArray = Arrays.asList("♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜");
     List<String> secondRankArray = Arrays.asList("♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟");
     List<String> emptyRankArray = Arrays.asList("•", "•", "•", "•", "•", "•", "•", "•");
     // boardlist should be a 2d char array. if not why?
     List<List<String>> boardList = new ArrayList<>();
+    // waarom + 1, omdat de a b c d e... er ook bij moet en + 2 omdat de a b c d
+    // e... een padding heeft van 2 chars
+    char[][] boardArray = new char[ROWS + 1][ROWS + 2];
     HashMap<String, Integer> letterToNumberMap = new HashMap<>();
 
     public TerminalChess(ConsoleHelper ch) {
@@ -30,9 +34,11 @@ public class TerminalChess implements Game {
     @Override
     public void StartGame() {
         GetLetterMap();
-        GenerateChessBoardV2();
-        ch.pr(BoardFromArray());
+        BoardToArray(GenerateChessBoardV2());
+        PrintBoard();
         GameLoop();
+        // ch.pr(BoardFromArray());
+        // GameLoop();
     }
 
     public void GameLoop() {
@@ -42,11 +48,20 @@ public class TerminalChess implements Game {
             String currentPos = ch.getl();
             ch.pr("Enter the desired position of the piece you want to move: ");
             String desiredPos = ch.getl();
-            MovePin(currentPos, desiredPos);
+            MoveSelectedPin(StringToPos(desiredPos), SelectPinV2(StringToPos(currentPos)));
+            PrintBoard();
         }
     }
 
-    public void GenerateChessBoardV2() {
+    public int[] StringToPos(String pos) {
+        int[] coordinate = new int[2];
+        var sva = String.valueOf(pos.charAt(1));
+        coordinate[0] = Integer.parseInt(sva);
+        coordinate[1] = letterToNumberMap.get(String.valueOf(pos.charAt(0))) + 1;
+        return coordinate;
+    }
+
+    public String GenerateChessBoardV2() {
         int rows = 8;
         String board = "  a b c d e f g h\n";
         String rank = "♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜ ";
@@ -66,6 +81,32 @@ public class TerminalChess implements Game {
                 boardList.add(emptyRankArray);
             }
             board += "\n";
+        }
+
+        return board;
+    }
+
+    public void BoardToArray(String boardString) {
+        var boardStringRows = boardString.split("\n");
+        for (int i = 0; i < boardStringRows.length; i++) {
+            var charArray = boardStringRows[i].split(" ");
+            for (int j = 0; j < charArray.length; j++) {
+                if (charArray[j].length() > 0) {
+                    var charAtPos = charArray[j].charAt(0);
+                    boardArray[i][j] = charAtPos;
+                }
+            }
+        }
+    }
+
+    public void PrintBoard() {
+        for (int i = 0; i < boardArray.length; i++) {
+            var row = boardArray[i];
+            for (int j = 0; j < row.length; j++) {
+                System.out.print(boardArray[i][j]);
+                System.out.print(" ");
+            }
+            System.out.println();
         }
     }
 
@@ -165,11 +206,56 @@ public class TerminalChess implements Game {
         ch.pr(BoardFromArray());
     }
 
+    public char SelectPinV2(int[] coordinate) {
+        int x = coordinate[0];
+        int y = coordinate[1];
+
+        if (x < 0 || x > ROWS || y < 0 || y > ROWS) {
+            ch.pr("Invalid coordinate");
+            return ' ';
+        }
+
+        if (boardArray[x][y] == '•') {
+            ch.pr("No pin at this coordinate");
+            return ' ';
+        }
+
+        var pin = boardArray[x][y];
+        boardArray[x][y] = '•';
+        return pin;
+    }
+
+    public void MoveSelectedPin(int[] coordinate, char pin) {
+        int x = coordinate[0];
+        int y = coordinate[1];
+
+        if (x < 0 || x > ROWS || y < 0 || y > ROWS) {
+            ch.pr("Invalid coordinate");
+            return;
+        }
+
+        if (pin == ' ')
+            return;
+
+        if (boardArray[x][y] != '•') {
+            ch.pr("pin at this coordinate");
+            return;
+        }
+
+        // get currentpost in letternumbermap and replace with black
+
+        boardArray[x][y] = pin;
+    }
+
     public void GetLetterMap() {
         for (char letter = 'a'; letter <= 'h'; letter++) {
             String letterString = String.valueOf(letter);
             int number = letter - 'a'; // Calculate the corresponding number
             letterToNumberMap.put(letterString, number);
         }
+    }
+
+    public void MirrorBoard() {
+        // player 2 needs a mirrored board
     }
 }
