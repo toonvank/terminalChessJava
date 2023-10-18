@@ -13,9 +13,9 @@ import sesh.mood.chessGame.services.ConsoleHelper;
 @Service
 public class TerminalChess implements Game {
     ConsoleHelper ch = new ConsoleHelper();
-    List<String> rankArray = Arrays.asList("♜", "♞","♝","♛","♚","♝","♞","♜");
-    List<String> secondRankArray = Arrays.asList("♟", "♟","♟","♟","♟","♟","♟","♟");
-    List<List<String>> boardList = new ArrayList<>();
+    ArrayList<String> rankArray = new ArrayList<>(Arrays.asList("♜", "♞","♝","♛","♚","♝","♞","♜"));
+    ArrayList<String> secondRankArray = new ArrayList<>(Arrays.asList("♟", "♟","♟","♟","♟","♟","♟","♟"));
+    ArrayList<ArrayList<String>> boardList = new ArrayList<>();
     HashMap<String, Integer> letterToNumberMap = new HashMap<>();
     public TerminalChess(ConsoleHelper ch) {
         this.ch = ch;
@@ -36,59 +36,25 @@ public class TerminalChess implements Game {
             MovePin(currentPos, desiredPos);
         }
     }
-    public String GenerateChessBoard(){
+    public String GenerateChessBoard() {
         String board = "  a b c d e f g h\n";
-        String rank = "♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜ ";
-        String secondRank = "♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟ ";
-        for(int i = 0; i < 8; i++){
-            board += (i+1) + " ";
-            List<String> row1 = new ArrayList<>();
-            if(i < 2){
-                if(i%2 == 0){
-                    board += rank;
-                    boardList.add(rankArray);
-                }
-                else{
-                    board += secondRank;
-                    boardList.add(secondRankArray);
-                }
-            }
-            else if(i>=6){
-                if(i%2 == 0){
-                    board += secondRank;
-                     boardList.add(secondRankArray);
-                }
-                else{
-                    board += rank;
-                    boardList.add(rankArray);
+        for (int i = 0; i < 8; i++) {
+            board += (i + 1) + " ";
+            ArrayList<String> row = new ArrayList<>();
+            for (int j = 0; j < 8; j++) {
+                if (i == 0 || i == 7) {
+                    board += rankArray.get(j);
+                    row.add(rankArray.get(j));
+                } else if (i == 1 || i == 6) {
+                    board += secondRankArray.get(j);
+                    row.add(secondRankArray.get(j));
+                } else {
+                    int index = (i + j) % 2 == 0 ? 0 : 1;
+                    board += "•";
+                    row.add("•");
                 }
             }
-            else{
-                //normally it should be possible just using board += "•" but for some reason it doesn't work so i had to keep the same code as before
-                if (i%2 == 0){
-                    for(int j = 0; j < 8; j++){
-                        if (j%2 == 0){
-                            board += "•";
-                            row1.add("•");
-                        } else{
-                            board += "•";
-                            row1.add("•");
-                        }
-                    }
-                }
-                else{
-                    for(int j = 0; j < 8; j++){
-                    if (j%2 == 0){
-                        board += "•";
-                        row1.add("•");
-                    } else{
-                        board += "•";
-                        row1.add("•");
-                    }
-                }
-            }
-            boardList.add(row1);
-            }
+            boardList.add(row);
             board += "\n";
         }
         return board;
@@ -99,15 +65,7 @@ public class TerminalChess implements Game {
         for (List<String> row : boardList) {
             board += (i+1) + " ";
             for (String element : row) {
-                if(i < 2){
-                   board+= element + " "; 
-                }
-                else if(i>=6){
-                    board+= element + " ";
-                }
-                else{
-                    board+= element + " ";
-                }
+                board+= element + " "; 
             }
             board += "\n";
             i++;
