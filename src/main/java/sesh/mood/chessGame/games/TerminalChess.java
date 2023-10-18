@@ -116,14 +116,12 @@ public class TerminalChess implements Game {
     }
     public void MovePin(String currentPos, String desiredPos){
         int desiredX = Integer.parseInt(String.valueOf(desiredPos.charAt(0))) - 1;
-        Integer desiredY = letterToNumberMap.get(String.valueOf(desiredPos.charAt(1)));
+        int desiredY = letterToNumberMap.get(String.valueOf(desiredPos.charAt(1)));
 
         int currentX = Integer.parseInt(String.valueOf(currentPos.charAt(0))) - 1;
-        Integer currentY = letterToNumberMap.get(String.valueOf(currentPos.charAt(1)));
+        int currentY = letterToNumberMap.get(String.valueOf(currentPos.charAt(1)));
 
         boardList.get(desiredX).set(desiredY, boardList.get(currentX).get(currentY));
-
-        //get currentpost in letternumbermap and replace with black
 
         boardList.get(currentX).set(currentY, "•");
 
