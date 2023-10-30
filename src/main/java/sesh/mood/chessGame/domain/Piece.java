@@ -2,33 +2,32 @@ package sesh.mood.chessGame.domain;
 
 public class Piece {
     //eerste zet bepalen
-    private Boolean initialMove = false;
-    private int initialMovePos;
+    public Boolean initialMove = false;
+    public int initialMovePos;
 
     //resterende zet
-    private int MovePos;
+    public int MovePos;
 
     //bewegingsrichtingen
-    private Boolean allowedFileUp = false;
-    private Boolean allowedFileDown = false;
-    private Boolean allowedDiagonalUp = false;
-    private Boolean allowedDiagonalDown = false;
-    private Boolean allowedRankLeft = false;
-    private Boolean allowedRankRight = false;
+    public Boolean allowedFileUp = false;
+    public Boolean allowedFileDown = false;
+    public Boolean allowedDiagonalUp = false;
+    public Boolean allowedDiagonalDown = false;
+    public Boolean allowedRankLeft = false;
+    public Boolean allowedRankRight = false;
 
     //aantal max toegelaten posities
-    private int fileUp;
-    private int fileDown;
-    private int diagonalUp;
-    private int diagonalDown;
-    private int rankLeft;
-    private int rankRight;
+    public int fileUp;
+    public int fileDown;
+    public int diagonalUp;
+    public int diagonalDown;
+    public int rankLeft;
+    public int rankRight;
 
     //identifier
-    private String name;
-    private int id;
-    private String unicode;
-
+    public String name;
+    public int id;
+    public String unicode;
 
     public Piece(Boolean initialMove, int initialMovePos, int MovePos, Boolean allowedFileUp, Boolean allowedFileDown, Boolean allowedDiagonalUp, Boolean allowedDiagonalDown, Boolean allowedRankLeft, Boolean allowedRankRight, int fileUp, int fileDown, int diagonalUp, int diagonalDown, int rankLeft, int rankRight, String name, int id, String unicode) {
         this.initialMove = initialMove;

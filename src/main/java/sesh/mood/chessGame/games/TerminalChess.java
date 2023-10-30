@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import sesh.mood.chessGame.domain.Game;
+import sesh.mood.chessGame.domain.Piece;
 import sesh.mood.chessGame.services.ConsoleHelper;
 import sesh.mood.chessGame.services.Pieces;
 
@@ -18,7 +19,7 @@ public class TerminalChess implements Game {
     ArrayList<String> secondRankArray = new ArrayList<>(Arrays.asList("♟", "♟","♟","♟","♟","♟","♟","♟"));
     ArrayList<ArrayList<String>> boardList = new ArrayList<>();
     HashMap<String, Integer> letterToNumberMap = new HashMap<>();
-    Pieces pieces;
+    Pieces pieces = new Pieces();
 
     public TerminalChess(ConsoleHelper ch, Pieces pieces) {
         this.ch = ch;
@@ -83,16 +84,24 @@ public class TerminalChess implements Game {
     }
 
     public void MovePin(String currentPos, String desiredPos){
-        int desiredX = Integer.parseInt(String.valueOf(desiredPos.charAt(0))) - 1;
-        int desiredY = letterToNumberMap.get(String.valueOf(desiredPos.charAt(1)));
+        int desiredY = Integer.parseInt(String.valueOf(desiredPos.charAt(0))) - 1;
+        int desiredX = letterToNumberMap.get(String.valueOf(desiredPos.charAt(1)));
 
-        int currentX = Integer.parseInt(String.valueOf(currentPos.charAt(0))) - 1;
-        int currentY = letterToNumberMap.get(String.valueOf(currentPos.charAt(1)));
+        int currentY = Integer.parseInt(String.valueOf(currentPos.charAt(0))) - 1;
+        int currentX = letterToNumberMap.get(String.valueOf(currentPos.charAt(1)));
 
-        boardList.get(desiredX).set(desiredY, boardList.get(currentX).get(currentY));
-
-        boardList.get(currentX).set(currentY, "•");
-
+        String unicode = boardList.get(currentY).get(currentX);
+        pieces.Pieces.forEach((k, v) -> {
+            if (v.equals(unicode)) {
+                try {
+                    CheckMove(k, desiredY, desiredX, currentY, currentX);
+                    boardList.get(desiredY).set(desiredX, boardList.get(currentY).get(currentX));
+                    boardList.get(currentY).set(currentX, "•");
+                } catch (InvalidMove e) {
+                    ch.prent(e.getMessage());
+                }            
+            }
+        });
         ch.pr(BoardFromArray());
     }
     public void GetLetterMap(){
@@ -147,4 +156,18 @@ public class TerminalChess implements Game {
     public void MirrorBoard() {
         // player 2 needs a mirrored board
     }
+
+    public void CheckMove(Piece piece, int desiredY, int desiredX, int currentY, int currentX) throws InvalidMove {
+        if (desiredX > currentX) {
+            if (piece.allowedRankRight == false) {
+                throw new InvalidMove("Not allowed to move right here");
+            }
+        }
+    }
+
+    public class InvalidMove extends Exception { 
+    public InvalidMove(String errorMessage) {
+        super(errorMessage);
+    }
+}
 }
