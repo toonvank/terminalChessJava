@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import sesh.mood.chessGame.domain.Game;
 import sesh.mood.chessGame.services.ConsoleHelper;
+import sesh.mood.chessGame.services.Pieces;
 
 @Service
 public class TerminalChess implements Game {
@@ -17,9 +18,11 @@ public class TerminalChess implements Game {
     ArrayList<String> secondRankArray = new ArrayList<>(Arrays.asList("♟", "♟","♟","♟","♟","♟","♟","♟"));
     ArrayList<ArrayList<String>> boardList = new ArrayList<>();
     HashMap<String, Integer> letterToNumberMap = new HashMap<>();
+    Pieces pieces;
 
-    public TerminalChess(ConsoleHelper ch) {
+    public TerminalChess(ConsoleHelper ch, Pieces pieces) {
         this.ch = ch;
+        this.pieces = pieces;
     }
 
     public TerminalChess() {
@@ -54,7 +57,7 @@ public class TerminalChess implements Game {
                     board += secondRankArray.get(j);
                     row.add(secondRankArray.get(j));
                 } else {
-                    int index = (i + j) % 2 == 0 ? 0 : 1;
+                    //int index = (i + j) % 2 == 0 ? 0 : 1;
                     board += "•";
                     row.add("•");
                 }
@@ -78,6 +81,7 @@ public class TerminalChess implements Game {
         }
         return board;
     }
+
     public void MovePin(String currentPos, String desiredPos){
         int desiredX = Integer.parseInt(String.valueOf(desiredPos.charAt(0))) - 1;
         int desiredY = letterToNumberMap.get(String.valueOf(desiredPos.charAt(1)));
