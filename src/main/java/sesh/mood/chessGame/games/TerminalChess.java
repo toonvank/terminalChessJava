@@ -163,6 +163,9 @@ public class TerminalChess implements Game {
                 throw new InvalidMove("Not allowed to move right here");
             }
         }
+        if (desiredY - currentY >= piece.fileDown){
+            throw new InvalidMove("Not allowed to move more then " + piece.fileDown + " positions down the file");
+        }
     }
 
     public class InvalidMove extends Exception { 
